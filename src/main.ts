@@ -24,6 +24,8 @@ const action = new CopybaraAction({
     exclude: core.getInput("push_exclude").split(" "),
     move: core.getInput("push_move").split(/\r?\n/),
     replace: core.getInput("push_replace").split(/\r?\n/),
+    message: "",
+    template: "",
   },
 
   // PR config
@@ -32,6 +34,8 @@ const action = new CopybaraAction({
     exclude: core.getInput("pr_exclude").split(" "),
     move: core.getInput("pr_move").split(/\r?\n/),
     replace: core.getInput("pr_replace").split(/\r?\n/),
+    message: core.getInput("pr_message"),
+    template: core.getInput("pr_template"),
   },
 
   // Advanced config

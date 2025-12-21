@@ -69,6 +69,20 @@ inputs:
     required: false
     default: ""
 
+  pr_message:
+    description: "Custom content to prepend to the PR body (e.g., changelog). Inserted via ${PR_MESSAGE} in pr_template."
+    required: false
+    default: ""
+
+  pr_template:
+    description: "PR body template. Available: ${PR_MESSAGE}, ${DESTINATION_REPO_REF}, ${GITHUB_PR_NUMBER}, ${GITHUB_PR_USER}, ${GITHUB_PR_TITLE}, ${GITHUB_PR_BODY}, ${ORIGINAL_AUTHOR}."
+    required: false
+    default: |
+      ${PR_MESSAGE}
+      
+      ORIGINAL_AUTHOR=${ORIGINAL_AUTHOR}
+      Closes ${DESTINATION_REPO_REF}#${GITHUB_PR_NUMBER}
+
   committer:
     description: "Who will commit changes (author will be original committer)."
     required: false
