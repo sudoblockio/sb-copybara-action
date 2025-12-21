@@ -44,6 +44,8 @@ export class CopyBara {
       this.generateInExcludes(config.pr.include),
       this.generateInExcludes(config.pr.exclude),
       this.generateTransformations(config.pr.move, config.pr.replace, "pr"),
+      config.pr.message,
+      config.pr.template,
     );
   }
 
@@ -173,4 +175,6 @@ export type WorkflowConfig = {
   exclude: string[];
   move: string[];
   replace: string[];
+  message: string;
+  template: string;
 };

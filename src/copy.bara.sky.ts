@@ -10,7 +10,9 @@ export const copyBaraSky = (
   pushTransformations: string,
   prInclude: string,
   prExclude: string,
-  prTransformations: string
+  prTransformations: string,
+  prMessage: string,
+  prTemplate: string
 ) => `
 # Variables
 SOT_REPO = "${sotRepo}"
@@ -29,6 +31,7 @@ PR_INCLUDE = [${prInclude}]
 PR_EXCLUDE = [${prExclude}]
 PR_TRANSFORMATIONS = [${prTransformations}
 ]
+PR_TEMPLATE = """${prTemplate.replace(/\$\{PR_MESSAGE\}/g, prMessage).replace(/\$\{DESTINATION_REPO_REF\}/g, destinationRepo.replace("git@github.com:", "").replace(".git", ""))}"""
 
 # Push workflow
 core.workflow(
@@ -69,7 +72,7 @@ core.workflow(
     set_rev_id = False,
     transformations = [
         metadata.save_author("ORIGINAL_AUTHOR"),
-        metadata.expose_label("GITHUB_PR_NUMBER", new_name = "Closes", separator = DESTINATION_REPO.replace("git@github.com:", " ").replace(".git", "#")),
+        metadata.replace_message(PR_TEMPLATE),
     ] + PR_TRANSFORMATIONS,
 )
 `;
