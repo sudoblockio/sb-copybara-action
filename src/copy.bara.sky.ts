@@ -12,7 +12,8 @@ export const copyBaraSky = (
   prExclude: string,
   prTransformations: string,
   prMessage: string,
-  prTemplate: string
+  prTemplate: string,
+  prBranchNameTemplate: string,
 ) => `
 # Variables
 SOT_REPO = "${sotRepo}"
@@ -32,6 +33,7 @@ PR_EXCLUDE = [${prExclude}]
 PR_TRANSFORMATIONS = [${prTransformations}
 ]
 PR_TEMPLATE = """${prTemplate.replace(/\$\{PR_MESSAGE\}/g, prMessage).replace(/\$\{DESTINATION_REPO_REF\}/g, destinationRepo.replace("git@github.com:", "").replace(".git", ""))}"""
+PR_BRANCH_NAME_TEMPLATE = "${prBranchNameTemplate}"
 
 # Push workflow
 core.workflow(
@@ -63,7 +65,12 @@ core.workflow(
     destination = git.github_pr_destination(
         url = SOT_REPO,
         destination_ref = SOT_BRANCH,
-        integrates = [],
+        integrates = [],${
+          prBranchNameTemplate
+            ? `
+        pr_branch = PR_BRANCH_NAME_TEMPLATE,`
+            : ""
+        }
     ),
     destination_files = glob(PUSH_INCLUDE, exclude = PUSH_EXCLUDE),
     origin_files = glob(PR_INCLUDE if PR_INCLUDE else ["**"], exclude = PR_EXCLUDE),

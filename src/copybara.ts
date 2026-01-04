@@ -46,6 +46,7 @@ export class CopyBara {
       this.generateTransformations(config.pr.move, config.pr.replace, "pr"),
       config.pr.message,
       config.pr.template,
+      config.pr.branchNameTemplate,
     );
   }
 
@@ -177,4 +178,5 @@ export type WorkflowConfig = {
   replace: string[];
   message: string;
   template: string;
+  branchNameTemplate: string;
 };
