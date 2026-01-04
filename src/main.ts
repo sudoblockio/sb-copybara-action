@@ -26,6 +26,7 @@ const action = new CopybaraAction({
     replace: core.getInput("push_replace").split(/\r?\n/),
     message: "",
     template: "",
+    branchNameTemplate: "",
   },
 
   // PR config
@@ -36,6 +37,7 @@ const action = new CopybaraAction({
     replace: core.getInput("pr_replace").split(/\r?\n/),
     message: core.getInput("pr_message"),
     template: core.getInput("pr_template"),
+    branchNameTemplate: core.getInput("pr_branch_name_template"),
   },
 
   // Advanced config

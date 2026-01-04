@@ -83,6 +83,11 @@ inputs:
       ORIGINAL_AUTHOR=${ORIGINAL_AUTHOR}
       Closes ${DESTINATION_REPO_REF}#${GITHUB_PR_NUMBER}
 
+  pr_branch_name_template:
+    description: "Template for naming PR branches created in the SoT repo. Available: ${CONTEXT_REFERENCE} (original PR branch). Leave empty to use Copybara's default (random hash)."
+    required: false
+    default: ""
+
   committer:
     description: "Who will commit changes (author will be original committer)."
     required: false
