@@ -131,7 +131,7 @@ export class CopybaraAction {
         if (!pathExists(configFile)) exit(51, `Cannot find the config file ${configFile}`);
         core.debug(`Load custom Copybara config from ${configFile}`);
         this.cbConfig = readFileSync(configFile, "utf8");
-      } else this.cbConfig = CopyBara.getConfig(await this.getWorkflow(), this.config);
+      } else this.cbConfig = CopyBara.getConfig(await this.getWorkflow(), this.config, this.config.sshKey);
     }
 
     return this.cbConfig;
@@ -139,9 +139,10 @@ export class CopybaraAction {
 
   async saveConfigFiles() {
     core.debug("Save config files");
+    const useHttps = !CopyBara.useSsh(this.config.sshKey);
     if (this.config.sshKey) await hostConfig.saveSshKey(this.config.sshKey);
     await hostConfig.saveAccessToken(this.config.accessToken);
-    await hostConfig.saveCommitter(this.config.committer);
+    await hostConfig.saveCommitter(this.config.committer, useHttps);
     await hostConfig.saveKnownHosts(this.config.knownHosts);
     await hostConfig.saveCopybaraConfig(await this.getCopybaraConfig());
 

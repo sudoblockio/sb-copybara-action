@@ -7,6 +7,14 @@ import { hostConfig } from "./hostConfig.js";
 export class CopyBara {
   constructor(readonly image: DockerConfig) {}
 
+  static useSsh(sshKey: string | undefined): boolean {
+    return Boolean(sshKey?.trim());
+  }
+
+  static repoUrl(ownerRepo: string, useSsh: boolean): string {
+    return useSsh ? `git@github.com:${ownerRepo}.git` : `https://github.com/${ownerRepo}.git`;
+  }
+
   public async download(): Promise<number> {
     return exec("docker", ["pull", `${this.image.name}:${this.image.tag}`]);
   }
@@ -38,12 +46,13 @@ export class CopyBara {
     }
   }
 
-  public static getConfig(workflow: string, config: CopybaraConfig): string {
+  public static getConfig(workflow: string, config: CopybaraConfig, sshKey?: string): string {
     this.validateConfig(config, workflow);
+    const useSsh = this.useSsh(sshKey);
     return copyBaraSky(
-      `git@github.com:${config.sot.repo}.git`,
+      this.repoUrl(config.sot.repo, useSsh),
       config.sot.branch,
-      `git@github.com:${config.destination.repo}.git`,
+      this.repoUrl(config.destination.repo, useSsh),
       config.destination.branch,
       config.committer,
       "file:///usr/src/app",
