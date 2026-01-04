@@ -4,8 +4,9 @@ author: "Romain Barissat"
 
 inputs:
   ssh_key:
-    description: "SSH public key."
-    required: true
+    description: "SSH private key for git authentication. If omitted, HTTPS auth with access_token is used."
+    required: false
+    default: ""
 
   access_token:
     description: "Personal access token with `repo` permissions. Always required on *destination*. Required on *SoT* only if the variable `sot_branch` below is left empty and to decide between **push** and **init** workflows."
@@ -79,7 +80,7 @@ inputs:
     required: false
     default: |
       ${PR_MESSAGE}
-      
+
       ORIGINAL_AUTHOR=${ORIGINAL_AUTHOR}
       Closes ${DESTINATION_REPO_REF}#${GITHUB_PR_NUMBER}
 
