@@ -62,6 +62,8 @@ Omit `ssh_key` to use HTTPS mode with token-based authentication:
     destination_repo: your/destination-repo
 ```
 
+> Note: App must have Contents, Pull requests, and Workflows read / write permissions. 
+
 **Using GITHUB_TOKEN (same-repo or fine-grained PAT):**
 ```yaml
 - uses: olivr/copybara-action@v1.2.5

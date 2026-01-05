@@ -117,11 +117,21 @@ export class CopybaraAction {
     if (!this.config.accessToken)
       exit(51, 'You need to manually set the "workflow" value to "push" or "init" OR set a value for "access_token".');
 
-    return !(await this.getGitHubClient().branchExists(
+    const branchExists = await this.getGitHubClient().branchExists(
       this.config.destination.repo,
       await this.getDestinationBranch(),
       this.config.createRepo,
-    ));
+    );
+
+    if (!branchExists) {
+      core.debug("Destination branch does not exist, initializing with empty commit");
+      await this.getGitHubClient().initializeBranch(
+        this.config.destination.repo,
+        await this.getDestinationBranch(),
+      );
+    }
+
+    return !branchExists;
   }
 
   async getCopybaraConfig() {
