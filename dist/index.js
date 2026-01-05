@@ -135998,7 +135998,7 @@ class CopyBara {
             if (!hasConfigInOptions) {
                 dockerArgs.push(`-e`, `COPYBARA_CONFIG=/root/copy.bara.sky`);
             }
-            dockerArgs.push(...dockerParams, this.image.name, "copybara", ...copybaraOptions);
+            dockerArgs.push(...dockerParams, this.image.name, ...copybaraOptions);
             const execExitCode = yield (0, exec_1.exec)(`docker`, dockerArgs, {
                 ignoreReturnCode: true,
             });

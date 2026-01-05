@@ -102,7 +102,6 @@ export class CopyBara {
     dockerArgs.push(
       ...dockerParams,
       this.image.name,
-      "copybara",
       ...copybaraOptions,
     );
 
