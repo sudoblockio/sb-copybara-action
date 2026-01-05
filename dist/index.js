@@ -136002,7 +136002,7 @@ class CopyBara {
             if (copybaraOptions.length > 0) {
                 dockerArgs.push(`-e`, `COPYBARA_OPTIONS=${copybaraOptions.join(" ")}`);
             }
-            dockerArgs.push(...dockerParams, this.image.name);
+            dockerArgs.push(...dockerParams, this.image.name, "copybara");
             const execExitCode = yield (0, exec_1.exec)(`docker`, dockerArgs, {
                 ignoreReturnCode: true,
             });
