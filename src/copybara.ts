@@ -107,6 +107,7 @@ export class CopyBara {
     dockerArgs.push(
       ...dockerParams,
       this.image.name,
+      "copybara",  // The image has CMD=bash, so we must explicitly call the copybara script
     );
 
     const execExitCode = await exec(`docker`, dockerArgs,
