@@ -124,11 +124,7 @@ export class CopybaraAction {
     );
 
     if (!branchExists) {
-      core.debug("Destination branch does not exist, initializing with empty commit");
-      await this.getGitHubClient().initializeBranch(
-        this.config.destination.repo,
-        await this.getDestinationBranch(),
-      );
+      core.debug("Destination branch does not exist, copybara will initialize with --init-history");
     }
 
     return !branchExists;
