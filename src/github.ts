@@ -29,6 +29,26 @@ export class GitHub {
     return this.api.rest.repos.get({ owner, repo }).then((res) => res.data.default_branch);
   }
 
+  async hasCopybaraHistory(repoFullName: string, branch: string): Promise<boolean> {
+    const [owner, repo] = repoFullName.split("/");
+
+    try {
+      const { data: commits } = await this.api.rest.repos.listCommits({
+        owner,
+        repo,
+        sha: branch,
+        per_page: 10,
+      });
+
+      return commits.some((commit) => commit.commit.message.includes("GitOrigin-RevId:"));
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "status" in err && err.status === 404) {
+        return false;
+      }
+      throw err;
+    }
+  }
+
   private async repoExists(owner: string, repo: string, createRepo: boolean): Promise<boolean> {
     return this.api.rest.repos
       .get({ owner, repo })

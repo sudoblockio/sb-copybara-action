@@ -117,17 +117,29 @@ export class CopybaraAction {
     if (!this.config.accessToken)
       exit(51, 'You need to manually set the "workflow" value to "push" or "init" OR set a value for "access_token".');
 
+    const destBranch = await this.getDestinationBranch();
+    core.info(`Checking if destination branch exists: ${this.config.destination.repo}@${destBranch}`);
+
     const branchExists = await this.getGitHubClient().branchExists(
       this.config.destination.repo,
-      await this.getDestinationBranch(),
+      destBranch,
       this.config.createRepo,
     );
 
     if (!branchExists) {
-      core.debug("Destination branch does not exist, copybara will initialize with --init-history");
+      core.info(`Destination branch does not exist, will use workflow: init`);
+      return true;
     }
 
-    return !branchExists;
+    core.info(`Checking if destination has copybara history (GitOrigin-RevId marker)`);
+    const hasCopybaraHistory = await this.getGitHubClient().hasCopybaraHistory(
+      this.config.destination.repo,
+      destBranch,
+    );
+
+    core.info(`Destination has copybara history: ${hasCopybaraHistory}, will use workflow: ${hasCopybaraHistory ? "push" : "init"}`);
+
+    return !hasCopybaraHistory;
   }
 
   async getCopybaraConfig() {

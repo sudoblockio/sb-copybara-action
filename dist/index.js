@@ -136187,11 +136187,17 @@ class CopybaraAction {
             core.debug("Detect if init workflow");
             if (!this.config.accessToken)
                 (0, exit_js_1.exit)(51, 'You need to manually set the "workflow" value to "push" or "init" OR set a value for "access_token".');
-            const branchExists = yield this.getGitHubClient().branchExists(this.config.destination.repo, yield this.getDestinationBranch(), this.config.createRepo);
+            const destBranch = yield this.getDestinationBranch();
+            core.info(`Checking if destination branch exists: ${this.config.destination.repo}@${destBranch}`);
+            const branchExists = yield this.getGitHubClient().branchExists(this.config.destination.repo, destBranch, this.config.createRepo);
             if (!branchExists) {
-                core.debug("Destination branch does not exist, copybara will initialize with --init-history");
+                core.info(`Destination branch does not exist, will use workflow: init`);
+                return true;
             }
-            return !branchExists;
+            core.info(`Checking if destination has copybara history (GitOrigin-RevId marker)`);
+            const hasCopybaraHistory = yield this.getGitHubClient().hasCopybaraHistory(this.config.destination.repo, destBranch);
+            core.info(`Destination has copybara history: ${hasCopybaraHistory}, will use workflow: ${hasCopybaraHistory ? "push" : "init"}`);
+            return !hasCopybaraHistory;
         });
     }
     getCopybaraConfig() {
@@ -136391,6 +136397,26 @@ class GitHub {
         return __awaiter(this, void 0, void 0, function* () {
             const [owner, repo] = repoFullName.split("/");
             return this.api.rest.repos.get({ owner, repo }).then((res) => res.data.default_branch);
+        });
+    }
+    hasCopybaraHistory(repoFullName, branch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [owner, repo] = repoFullName.split("/");
+            try {
+                const { data: commits } = yield this.api.rest.repos.listCommits({
+                    owner,
+                    repo,
+                    sha: branch,
+                    per_page: 10,
+                });
+                return commits.some((commit) => commit.commit.message.includes("GitOrigin-RevId:"));
+            }
+            catch (err) {
+                if (err && typeof err === "object" && "status" in err && err.status === 404) {
+                    return false;
+                }
+                throw err;
+            }
         });
     }
     repoExists(owner, repo, createRepo) {
