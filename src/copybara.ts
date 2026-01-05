@@ -99,10 +99,14 @@ export class CopyBara {
       dockerArgs.push(`-e`, `COPYBARA_CONFIG=/root/copy.bara.sky`);
     }
 
+    // Pass options via COPYBARA_OPTIONS env var (the entrypoint script reads this)
+    if (copybaraOptions.length > 0) {
+      dockerArgs.push(`-e`, `COPYBARA_OPTIONS=${copybaraOptions.join(" ")}`);
+    }
+
     dockerArgs.push(
       ...dockerParams,
       this.image.name,
-      ...copybaraOptions,
     );
 
     const execExitCode = await exec(`docker`, dockerArgs,
