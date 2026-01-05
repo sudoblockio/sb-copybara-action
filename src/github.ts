@@ -45,20 +45,8 @@ export class GitHub {
     const currentUser = await this.api.rest.users.getAuthenticated().then((res) => res.data.name);
 
     return currentUser == owner
-      ? this.api.rest.repos.createForAuthenticatedUser({ name: repo, auto_init: true })
-      : this.api.rest.repos.createInOrg({ org: owner, name: repo, auto_init: true });
+      ? this.api.rest.repos.createForAuthenticatedUser({ name: repo })
+      : this.api.rest.repos.createInOrg({ org: owner, name: repo });
   }
 
-  async initializeBranch(repoFullName: string, branch: string): Promise<void> {
-    const [owner, repo] = repoFullName.split("/");
-
-    await this.api.rest.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: "README.md",
-      message: "chore: initialize repository",
-      content: Buffer.from(`# ${repo}\n`).toString("base64"),
-      branch,
-    });
-  }
 }
